@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Process Management</title>
+<style>
+:root{--purple:#5b1680;--purple2:#7414a0;--purple-dark:#351044;--lav:#f5eafd;--lav2:#fbf6ff;--ink:#17151c;--muted:#667085;--line:#e7e5ee;--surface:#fff;--page:#f7f8fc;--danger:#d92d20;--shadow:0 12px 36px rgba(45,20,64,.12);--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #cfa9f2;outline-offset:2px}.app{min-height:100dvh;max-width:980px;margin:0 auto;background:var(--page);position:relative;overflow:hidden}.topbar{height:76px;display:grid;grid-template-columns:52px 1fr 52px;align-items:center;padding:0 16px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;backdrop-filter:blur(17px)}.icon-btn{border:0;background:transparent;color:var(--ink);width:44px;height:44px;border-radius:14px;display:grid;place-items:center;transition:background .2s,transform .2s}.icon-btn:hover{background:#f2e8fa}.icon-btn:active{transform:scale(.94)}.icon-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.top-total{text-align:center;color:var(--purple);font-size:clamp(23px,4vw,31px);font-weight:800;letter-spacing:-.8px;font-variant-numeric:tabular-nums}.add-main{background:var(--purple);color:white;border:0;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;box-shadow:0 5px 12px #5b168033;transition:transform .22s,box-shadow .22s}.add-main:hover{transform:rotate(90deg);box-shadow:0 8px 18px #5b168044}.add-main svg{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-bottom:1px solid var(--line);position:sticky;top:76px;z-index:8}.tab{height:54px;border:0;background:transparent;color:#3e3a47;font-weight:700;position:relative;transition:color .2s}.tab:after{content:"";position:absolute;bottom:0;left:18%;width:64%;height:3px;background:var(--purple);border-radius:4px 4px 0 0;transform:scaleX(0);transition:transform .28s cubic-bezier(.2,.8,.2,1)}.tab.active{color:var(--purple)}.tab.active:after{transform:scaleX(1)}
+main{padding:16px;min-height:calc(100dvh - 131px)}.page{animation:pageIn .32s cubic-bezier(.2,.7,.2,1) both}@keyframes pageIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px}.search-wrap{height:48px;flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:#eef0f5;border:1px solid transparent;border-radius:28px;padding:0 15px;transition:border .2s,box-shadow .2s,background .2s}.search-wrap:focus-within{background:#fff;border-color:#c99be5;box-shadow:0 0 0 3px #ead8f6}.search-wrap svg{width:21px;height:21px;stroke:#606a7b;fill:none;stroke-width:2;flex-shrink:0}.search-wrap input{border:0;outline:0;background:transparent;min-width:0;width:100%;font-size:12px;color:var(--ink)}.search-wrap input::placeholder{color:#7d8493}.filter-btn{height:46px;padding:0 15px;border:1px solid #b77bd6;border-radius:12px;background:#fff;color:var(--purple);font-weight:700;display:flex;align-items:center;gap:7px;transition:background .2s,transform .2s}.filter-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2}.filter-btn:hover{background:var(--lav2);transform:translateY(-2px)}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:linear-gradient(110deg,#f7eafd,#f8effd);border:1px solid #f0e0f8;border-radius:15px;margin-bottom:14px;padding:15px 5px;box-shadow:0 3px 10px #5b168008}.summary.two{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{text-align:center;padding:0 5px;min-width:0}.metric+.metric{border-left:1px solid #dfcbe9}.metric-label{font-size:11px;color:#4f4b58;display:block;margin-bottom:6px}.metric-value{font-size:clamp(20px,4vw,26px);font-weight:800;color:var(--purple);font-variant-numeric:tabular-nums;white-space:nowrap}.list{display:flex;flex-direction:column;gap:10px}.item{background:#fff;border:1px solid var(--line);border-radius:15px;min-height:74px;display:grid;grid-template-columns:minmax(0,1fr) auto 28px;align-items:center;padding:12px 10px 12px 15px;gap:12px;box-shadow:0 2px 8px rgba(22,16,34,.025);animation:cardIn .32s both;transition:transform .2s,border-color .2s,box-shadow .2s}.item:hover{transform:translateY(-3px);border-color:#d9c2e7;box-shadow:0 7px 18px rgba(45,20,64,.07)}@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.item-name{font-weight:750;font-size:13px;overflow-wrap:anywhere}.item-sub{font-size:11px;color:var(--muted);margin-top:4px}.item-amount{border-left:1px solid var(--line);padding-left:14px;min-width:92px;text-align:right;font-weight:800;color:var(--purple);font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}.more-btn{width:28px;height:36px;border:0;background:transparent;border-radius:8px;display:grid;place-items:center;color:#29252f;font-size:21px;line-height:1}.more-btn:hover{background:var(--lav)}.empty{padding:34px 18px;text-align:center;color:var(--muted);background:#fff;border:1px dashed #d9d3e2;border-radius:16px}.empty strong{display:block;color:#3d3548;margin-bottom:5px}
+.overall-title,.section-title{font-size:20px;font-weight:800;letter-spacing:-.5px;margin:2px 0 16px}.overall-stack{display:flex;flex-direction:column;gap:14px}.overall-card{border-radius:17px;overflow:hidden;border:1px solid #eadcf4;background:#fff;box-shadow:0 5px 16px rgba(45,20,64,.04)}.overall-card h3{margin:0;padding:14px 17px;font-size:14px;background:#f2e3fb;color:var(--purple)}.overall-card .summary{border:0;border-radius:0;margin:0;box-shadow:none;padding:17px 5px;background:#fff}.overall-card.party h3{background:#fff1d8;color:#75420b}.overall-card.party .metric-value{color:#75420b}.overall-card.other h3{background:#e6f8ed;color:#12653e}.overall-card.other .metric-value{color:#12653e}.grand-total{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--lav);border:1px solid #ead8f6;border-radius:16px;padding:20px 18px;margin-top:2px}.grand-total span{font-weight:750;color:#3e2c4c}.grand-total strong{font-size:clamp(25px,5vw,31px);color:var(--purple);font-variant-numeric:tabular-nums}
+.sharing-total{padding:22px 15px;text-align:center;border-radius:16px;background:var(--lav);margin-bottom:14px}.sharing-total span{display:block;font-size:12px;color:#51445c;margin-bottom:6px}.sharing-total strong{font-size:28px;font-weight:850;color:var(--purple);font-variant-numeric:tabular-nums}.setup-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;margin-bottom:15px}.field-label{font-size:11px;font-weight:700;color:#4b4654;display:block;margin-bottom:7px}.count-control{display:grid;grid-template-columns:48px 1fr 48px;gap:8px;margin-bottom:14px}.count-control button{border:1px solid #d9cde4;background:#fff;border-radius:12px;color:var(--purple);font-size:22px;font-weight:700}.count-control output{display:grid;place-items:center;border:1px solid #d9cde4;border-radius:12px;font-size:18px;font-weight:800}.primary-btn,.secondary-btn{border-radius:12px;min-height:46px;padding:0 18px;font-weight:750;transition:transform .18s,box-shadow .18s,background .18s}.primary-btn{background:linear-gradient(120deg,var(--purple),var(--purple2));border:0;color:white;box-shadow:0 5px 12px #5b168022}.primary-btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px #5b168033}.primary-btn:active,.secondary-btn:active{transform:scale(.98)}.secondary-btn{background:white;border:1px solid #c69bdb;color:var(--purple)}.full{width:100%}.share-table-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:15px;margin-bottom:12px}.share-table{width:100%;border-collapse:collapse;min-width:460px}.share-table th{background:#f3e7fb;color:#493454;font-size:11px;text-align:left;padding:12px 9px}.share-table td{padding:8px 7px;border-top:1px solid #eee9f3}.share-table input{width:100%;min-width:0;height:38px;border:1px solid #ded9e7;border-radius:9px;padding:0 9px;background:#fff}.share-amount{color:var(--purple);font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}.share-total-row{display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;padding:15px;background:var(--lav);border-radius:13px;color:var(--purple);font-weight:800;margin-bottom:14px}.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{color:var(--muted);font-size:11px;line-height:1.5;margin:10px 2px 0}.status-note{margin:10px 0 0;color:var(--danger);font-size:11px;font-weight:650}.menu-overlay,.modal-overlay{position:fixed;inset:0;background:rgba(21,14,29,.42);backdrop-filter:blur(4px);z-index:30;opacity:0;pointer-events:none;transition:opacity .25s}.menu-overlay.open,.modal-overlay.open{opacity:1;pointer-events:auto}.drawer{position:fixed;z-index:31;left:0;top:0;bottom:0;width:min(84vw,341px);background:#fff;box-shadow:var(--shadow);padding:calc(22px + env(safe-area-inset-top)) 16px 22px;transform:translateX(-105%);transition:transform .32s cubic-bezier(.2,.8,.2,1);border-radius:0 20px 20px 0}.drawer.open{transform:translateX(0)}.drawer-head{display:flex;justify-content:space-between;align-items:center;color:var(--purple);font-weight:850;font-size:16px;margin-bottom:25px;padding:0 4px}.drawer-link{width:100%;display:flex;align-items:center;gap:14px;border:0;background:#fff;padding:16px 14px;border-radius:14px;text-align:left;font-weight:750;color:#292432;margin-bottom:8px;transition:background .2s,color .2s}.drawer-link.active,.drawer-link:hover{background:var(--lav);color:var(--purple)}.drawer-link svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2}.drawer-link span:last-child{margin-left:auto;color:#8e8497}
+.modal-overlay{display:flex;align-items:flex-end;justify-content:center;padding:18px 12px}.modal{width:min(100%,521px);background:#fff;border-radius:24px 24px 20px 20px;padding:22px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -10px 45px rgba(24,10,34,.2);transform:translateY(29px) scale(.985);transition:transform .28s cubic-bezier(.2,.8,.2,1);max-height:88dvh;overflow:auto}.modal-overlay.open .modal{transform:translateY(0) scale(1)}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.modal-head h2{margin:0;font-size:19px;letter-spacing:-.4px}.close-btn{border:0;background:#f4f1f7;border-radius:50%;width:36px;height:36px;font-size:21px;color:#4c4654;display:grid;place-items:center}.form-grid{display:grid;gap:13px}.form-field label{display:block;font-size:11px;font-weight:700;color:#514b5a;margin-bottom:7px}.form-field input{width:100%;height:48px;border:1px solid #dcd6e5;border-radius:12px;padding:0 13px;background:#fff;color:var(--ink);transition:border .2s,box-shadow .2s}.form-field input:focus{outline:none;border-color:#b67ad4;box-shadow:0 0 0 3px #f1e4f8}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.context-menu{position:fixed;z-index:25;display:none;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:6px;box-shadow:var(--shadow);animation:popIn .16s ease-out}.context-menu.open{display:block}@keyframes popIn{from{opacity:0;transform:scale(.96) translateY(5px)}to{opacity:1;transform:scale(1) translateY(0)}}.context-menu button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px 12px;border-radius:8px;color:#2b2632;font-weight:650}.context-menu button:hover{background:var(--lav)}.context-menu .delete{color:var(--danger)}.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translate(-50%,19px);opacity:0;pointer-events:none;background:#24142f;color:#fff;border-radius:13px;padding:12px 18px;box-shadow:var(--shadow);font-size:12px;font-weight:650;transition:opacity .22s,transform .22s;max-width:calc(100vw - 33px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.hidden{display:none!important}
+
+/* Compact sizing update: typography reduced by 3px across the interface. */
+.item{padding-top:10px;padding-bottom:10px}
+.summary{padding-top:12px;padding-bottom:12px}
+.overall-card h3{padding-top:11px;padding-bottom:11px}
+.setup-card{padding:14px}
+
+
+/* Firebase sign-in screen */
+
+@media(min-width:701px){.app{margin:24px auto;min-height:calc(100dvh - 49px);border-radius:24px;border:1px solid #ebe7f0;box-shadow:0 20px 70px rgba(38,22,51,.08)}body{padding:1px}.topbar{border-radius:24px 24px 0 0}.modal-overlay{align-items:center}.modal{border-radius:24px;max-height:85dvh}.summary{padding:18px 10px}.item{padding:14px 15px}.drawer{top:24px;bottom:24px;border-radius:0 20px 20px 0}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="app">
+<header class="topbar">
+<button class="icon-btn" id="menuOpen" aria-label="Open menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+<div class="top-total" id="topTotal">₹ 0</div>
+<button class="add-main" id="addMain" aria-label="Add new record"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+</header>
+<nav class="tabs" aria-label="Categories">
+<button class="tab active" data-page="weavers">Weavers</button><button class="tab" data-page="partys">Partys</button><button class="tab" data-page="others">Others</button>
+</nav>
+<main id="main"></main>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<aside class="drawer" id="drawer" aria-label="Main menu">
+<div class="drawer-head"><span>Process Management</span><button class="icon-btn" id="menuClose" aria-label="Close menu">×</button></div>
+<button class="drawer-link" data-route="overall"><svg viewBox="0 0 24 24"><path d="M4 19V10M10 19V5M16 19v-7M22 19V8"/></svg><span>Overall</span><span>›</span></button>
+<button class="drawer-link" data-route="sharing"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.6 6.6-4.2M8.7 13.4l6.6 4.2"/></svg><span>Sharing</span><span>›</span></button>
+</aside>
+<div class="modal-overlay" id="modalOverlay" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle">Add Weaver</h2><button class="close-btn" id="modalClose" aria-label="Close">×</button></div><form id="recordForm"><div id="formFields" class="form-grid"></div><div class="modal-actions"><button type="button" class="secondary-btn" id="modalCancel">Cancel</button><button type="submit" class="primary-btn" id="formSubmit">Save</button></div></form></section></div>
+<div class="modal-overlay" id="filterOverlay" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="filterTitle"><div class="modal-head"><h2 id="filterTitle">Filter by Amount</h2><button class="close-btn" id="filterClose" aria-label="Close">×</button></div><div class="form-grid"><label class="filter-choice"><input type="radio" name="sort" value="recent" checked> Recent Added</label><label class="filter-choice"><input type="radio" name="sort" value="high"> Amount: High to Low</label><label class="filter-choice"><input type="radio" name="sort" value="low"> Amount: Low to High</label></div><div class="modal-actions"><button class="secondary-btn" id="filterCancel">Cancel</button><button class="primary-btn" id="filterApply">Apply</button></div></section></div>
+<div class="context-menu" id="contextMenu"><button id="editAction">Edit</button><button class="delete" id="deleteAction">Delete</button></div>
+<div class="toast" id="toast" role="status"></div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDNrTFIWKG33y7j6G2DVGAsjQnlzXTmIL4",
+  authDomain: "diwali-6d935.firebaseapp.com",
+  projectId: "diwali-6d935",
+  storageBucket: "diwali-6d935.firebasestorage.app",
+  messagingSenderId: "289984577376",
+  appId: "1:289984577376:web:0808f0f372e0e573c76805",
+  measurementId: "G-7CK7J6N6CZ"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+// Cloud document path: processManagement/main. Firestore rules must allow this exact document path.
+let cloudReady = false;
+let cloudSaveTimer = null;
+let loadingCloud = false;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fmt=n=>new Intl.NumberFormat('en-IN',{maximumFractionDigits:2}).format(Number(n)||0);
+const money=n=>'₹ '+fmt(n);
+const state={
+ page:'weavers',editing:null,menuRecord:null,sort:{weavers:'recent',partys:'recent',others:'recent'},query:{weavers:'',partys:'',others:''},
+ data:{
+  weavers:[{id:1,name:'Manikandan P',looms:3,amount:1500},{id:2,name:'Ramesh R',looms:2,amount:1200},{id:3,name:'Srinivasan',looms:4,amount:1300},{id:4,name:'Lakshmi',looms:2,amount:1000}],
+  partys:[{id:1,name:'Ramkumar',amount:800},{id:2,name:'Suresh',amount:1200}],
+  others:[{id:1,name:'Transport',amount:1500},{id:2,name:'Workers',amount:1200},{id:3,name:'Materials',amount:900},{id:4,name:'Miscellaneous',amount:1400}]
+ },
+ shareCount:6,shares:Array.from({length:6},(_,i)=>({name:['Srini','Raj','Kumar','Siva','Thaso','Peter'][i],percent:[10,10,30,20,20,10][i]})),shareCreated:false
+};
+// Persist records and sharing settings across page refreshes and browser restarts.
+const STORAGE_KEY='processManagementData_v1';
+try{
+ const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+ if(saved && saved.data){
+  for(const k of ['weavers','partys','others']){
+   if(Array.isArray(saved.data[k])){
+    state.data[k]=saved.data[k].map((r,i)=>({
+     ...r,
+     id:Number(r.id)||i+1,
+     name:String(r.name??''),
+     amount:Number(r.amount)||0,
+     addedAt:Number(r.addedAt)||Number(r.id)||Date.now()
+    }));
+   }
+  }
+  if(Array.isArray(saved.shares)) state.shares=saved.shares;
+  if(Number.isFinite(Number(saved.shareCount))) state.shareCount=Math.max(1,Math.min(100,Number(saved.shareCount)));
+  state.shareCreated=Boolean(saved.shareCreated);
+ }
+}catch(error){
+ console.warn('Could not load saved Process Management data:',error);
+}
+function localSnapshot(){return {data:state.data,shares:state.shares,shareCount:state.shareCount,shareCreated:state.shareCreated};}
+function saveState(){
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(localSnapshot()));}
+ catch(error){console.error('Could not save local backup:',error);toast('Local backup failed. Check browser storage settings.');}
+ if(cloudReady && !loadingCloud){
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer=setTimeout(()=>persistCloudState(),450);
+ }
+ return true;
+}
+async function persistCloudState(showSuccess=false){
+ if(!cloudReady || loadingCloud)return;
+ try{
+  await setDoc(doc(db,'processManagement','main'),{...localSnapshot(),updatedAt:serverTimestamp()});
+  if(showSuccess)toast('Firebase data saved successfully');
+ }catch(error){
+  console.error('Firebase save failed:',error);
+  toast(firebaseErrorMessage(error));
+ }
+}
+function firebaseErrorMessage(error){
+ const code=error?.code||'';
+ if(code.includes('permission-denied'))return 'Firebase access denied. In Firestore → Rules, publish rules for /processManagement/main. The site is using local backup until cloud access is allowed.';
+ if(code.includes('unavailable'))return 'Firebase is unavailable. Check your internet connection.';
+ if(code.includes('network'))return 'Network error. Check your internet connection.';
+ return error?.message || 'Firebase error. Check your Firebase setup.';
+}
+async function loadCloudData(){
+ loadingCloud=true;cloudReady=false;
+ try{
+  const ref=doc(db,'processManagement','main');
+  const snap=await getDoc(ref);
+  if(snap.exists()){
+   const saved=snap.data();
+   for(const k of ['weavers','partys','others'])if(Array.isArray(saved.data?.[k]))state.data[k]=saved.data[k].map((r,i)=>({...r,id:Number(r.id)||i+1,name:String(r.name??''),amount:Number(r.amount)||0,addedAt:Number(r.addedAt)||Number(r.id)||Date.now()}));
+   if(Array.isArray(saved.shares))state.shares=saved.shares;
+   if(Number.isFinite(Number(saved.shareCount)))state.shareCount=Math.max(1,Math.min(100,Number(saved.shareCount)));
+   state.shareCreated=Boolean(saved.shareCreated);
+  }else{
+   // First connection: upload this browser's saved data (or the initial sample data).
+   await setDoc(ref,{...localSnapshot(),updatedAt:serverTimestamp()});
+  }
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(localSnapshot()));
+  cloudReady=true;
+ }catch(error){
+  console.error('Firebase load failed:',error);
+  cloudReady=false;
+  toast(firebaseErrorMessage(error));
+  throw error;
+ }finally{loadingCloud=false;}
+}
+const categoryLabel={weavers:'Weaver',partys:'Party',others:'Other'};
+const titleCase=k=>({weavers:'Weavers',partys:'Partys',others:'Others'}[k]||k);
+const totalCategory=k=>state.data[k].reduce((s,r)=>s+Number(r.amount||0),0);
+const grandTotal=()=>['weavers','partys','others'].reduce((s,k)=>s+totalCategory(k),0);
+function updateTop(){ $('#topTotal').textContent=money(grandTotal()); }
+function summaryMetric(label,value){return `<div class="metric"><span class="metric-label">${label}</span><div class="metric-value">${value}</div></div>`}
+function renderCategory(k){
+ const isW=k==='weavers',query=state.query[k].toLowerCase();
+ let rows=state.data[k].filter(r=>r.name.toLowerCase().includes(query));
+ if(state.sort[k]==='recent')rows.sort((a,b)=>(Number(b.addedAt)||Number(b.id)||0)-(Number(a.addedAt)||Number(a.id)||0));
+ if(state.sort[k]==='high')rows.sort((a,b)=>Number(b.amount||0)-Number(a.amount||0));
+ if(state.sort[k]==='low')rows.sort((a,b)=>Number(a.amount||0)-Number(b.amount||0));
+ const search=`<div class="toolbar"><label class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><input type="search" id="searchInput" placeholder="Search ${isW?'weaver':k==='partys'?'party':'others'} name..." value="${escapeHtml(state.query[k])}" aria-label="Search ${titleCase(k)}"></label><button class="filter-btn" id="filterOpen"><svg viewBox="0 0 24 24"><path d="M4 5h16l-6.2 7.2v5.1l-3.6 1.8v-6.9z"/></svg>Filter</button></div>`;
+ const summary=`<section class="summary ${isW?'':'two'}">${isW?summaryMetric('Total weavers',state.data.weavers.length)+summaryMetric('Looms',fmt(state.data.weavers.reduce((s,r)=>s+Number(r.looms||0),0)))+summaryMetric('Amount',money(totalCategory(k))):summaryMetric(k==='partys'?'Total Party':'Total Others',state.data[k].length)+summaryMetric('Total amount',money(totalCategory(k)))}</section>`;
+ const cards=rows.length?`<div class="list">${rows.map((r,i)=>`<article class="item" style="animation-delay:${Math.min(i,8)*35}ms"><div><div class="item-name">${escapeHtml(r.name)}</div>${isW?`<div class="item-sub">${fmt(r.looms)} ${Number(r.looms)===1?'loom':'looms'}</div>`:''}</div><div class="item-amount">${money(r.amount)}</div><button class="more-btn" data-more="${k}:${r.id}" aria-label="Actions for ${escapeHtml(r.name)}">⋮</button></article>`).join('')}</div>`:`<div class="empty"><strong>${query?'No matching records':'No records yet'}</strong>${query?'Try another search.':'Tap + to add your first '+categoryLabel[k].toLowerCase()+'.'}</div>`;
+ return `<section class="page" data-current="${k}">${search}${summary}${cards}</section>`;
+}
+function renderOverall(){
+ const w=state.data.weavers.length,looms=state.data.weavers.reduce((s,r)=>s+Number(r.looms||0),0),p=state.data.partys.length,o=state.data.others.length;
+ return `<section class="page"><h1 class="overall-title">Overall</h1><div class="overall-stack">
+ <section class="overall-card"><h3>Total Weavers</h3><div class="summary">${summaryMetric('Weavers',w)}${summaryMetric('Looms',fmt(looms))}${summaryMetric('Amount',money(totalCategory('weavers')))}</div></section>
+ <section class="overall-card party"><h3>Total Partys</h3><div class="summary two">${summaryMetric('Partys',p)}${summaryMetric('Amount',money(totalCategory('partys')))}</div></section>
+ <section class="overall-card other"><h3>Total Others</h3><div class="summary two">${summaryMetric('Others',o)}${summaryMetric('Amount',money(totalCategory('others')))}</div></section>
+ <div class="grand-total"><span>Total Amount</span><strong>${money(grandTotal())}</strong></div></div></section>`;
+}
+function renderSharing(){
+ const total=grandTotal();
+ const rows=state.shareCreated?state.shares.map((p,i)=>`<tr><td>${i+1}</td><td><input aria-label="Person ${i+1} name" data-share-name="${i}" value="${escapeHtml(p.name)}" placeholder="Person name"></td><td><input aria-label="Person ${i+1} percentage" data-share-percent="${i}" type="number" min="0" max="100" step="0.01" value="${p.percent}"></td><td class="share-amount">${money(total*(Number(p.percent)||0)/100)}</td><td><button class="more-btn" data-share-more="${i}" aria-label="Person actions">⋮</button></td></tr>`).join(''):'';
+ const pct=state.shares.reduce((s,p)=>s+(Number(p.percent)||0),0);
+ return `<section class="page"><h1 class="section-title">Sharing</h1><div class="sharing-total"><span>Total Amount</span><strong>${money(total)}</strong></div>
+ <div class="setup-card"><label class="field-label">Number of persons</label><div class="count-control"><button id="countMinus" aria-label="Decrease people">−</button><output>${state.shareCount}</output><button id="countPlus" aria-label="Increase people">+</button></div><button class="primary-btn full" id="createShares">${state.shareCreated?'Update People':'Create'}</button></div>
+ ${state.shareCreated?`<div class="share-table-wrap"><table class="share-table"><thead><tr><th>No.</th><th>Name</th><th>Percentage (%)</th><th>Amount (₹)</th><th></th></tr></thead><tbody>${rows}</tbody></table></div><div class="share-total-row"><span>Total</span><span>${fmt(pct)}%</span><span>${money(total*pct/100)}</span></div><div class="share-actions"><button class="secondary-btn" id="resetShares">Reset</button><button class="primary-btn" id="saveShares">Save</button></div><p class="hint">Each amount is calculated from the common total. Percentages should add up to 100% to allocate the full amount.</p><div id="shareNote" class="status-note ${Math.abs(pct-100)<.001?'hidden':''}">Current percentage total is ${fmt(pct)}%. Adjust it to 100% to allocate the full amount.</div>`:''}</section>`;
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ updateTop();$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.page===state.page));
+ $('#main').innerHTML=state.page==='overall'?renderOverall():state.page==='sharing'?renderSharing():renderCategory(state.page);
+ bindPage();
+}
+function bindPage(){
+ const search=$('#searchInput');if(search)search.addEventListener('input',e=>{const el=e.target, pos=el.selectionStart;state.query[state.page]=el.value;const y=window.scrollY;render();const next=$('#searchInput');next.focus();next.setSelectionRange(pos,pos);window.scrollTo(0,y)});
+ $('#filterOpen')?.addEventListener('click',openFilter);
+ $$('.more-btn[data-more]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const [k,id]=b.dataset.more.split(':');openContext(b,{type:'record',k,id:Number(id)})}));
+ $('#countMinus')?.addEventListener('click',()=>resizeShares(Math.max(1,state.shareCount-1)));
+ $('#countPlus')?.addEventListener('click',()=>resizeShares(Math.min(100,state.shareCount+1)));
+ $('#createShares')?.addEventListener('click',()=>{state.shareCreated=true;saveState();render();toast('Sharing table ready')});
+ $('#resetShares')?.addEventListener('click',()=>{state.shares=state.shares.map(p=>({...p,percent:0}));saveState();render()});
+ $('#saveShares')?.addEventListener('click',()=>{const pct=state.shares.reduce((s,p)=>s+(Number(p.percent)||0),0);if(Math.abs(pct-100)>.001){toast('Percentages must total 100%');return}saveState();toast('Sharing allocation saved')});
+ $$('[data-share-name]').forEach(inp=>inp.addEventListener('change',()=>{state.shares[Number(inp.dataset.shareName)].name=inp.value;saveState()}));
+ $$('[data-share-percent]').forEach(inp=>inp.addEventListener('input',()=>{const i=Number(inp.dataset.sharePercent);state.shares[i].percent=Math.max(0,Math.min(100,Number(inp.value)||0));saveState();const tr=inp.closest('tr');tr.querySelector('.share-amount').textContent=money(grandTotal()*state.shares[i].percent/100);const pct=state.shares.reduce((s,p)=>s+(Number(p.percent)||0),0);$('.share-total-row span:nth-child(2)').textContent=fmt(pct)+'%';$('.share-total-row span:nth-child(3)').textContent=money(grandTotal()*pct/100);const note=$('#shareNote');if(note){note.classList.toggle('hidden',Math.abs(pct-100)<.001);note.textContent=`Current percentage total is ${fmt(pct)}%. Adjust it to 100% to allocate the full amount.`}}));
+ $('#resetShares')?.addEventListener('click',()=>toast('Percentages reset'));
+ $$('[data-share-more]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const i=Number(b.dataset.shareMore);openContext(b,{type:'share',i})}));
+}
+function resizeShares(n){const old=state.shares;state.shareCount=n;state.shares=Array.from({length:n},(_,i)=>old[i]||{name:'',percent:0});saveState();render()}
+function switchPage(k){state.page=k;closeDrawer();closeContext();render();window.scrollTo({top:0,behavior:'smooth'})}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.page)));
+$$('[data-route]').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.route)));
+$('#menuOpen').addEventListener('click',openDrawer);$('#menuClose').addEventListener('click',closeDrawer);$('#menuOverlay').addEventListener('click',closeDrawer);
+function openDrawer(){$('#drawer').classList.add('open');$('#menuOverlay').classList.add('open')}
+function closeDrawer(){$('#drawer').classList.remove('open');$('#menuOverlay').classList.remove('open')}
+$('#addMain').addEventListener('click',()=>openRecordModal());
+function openRecordModal(k=state.page,record=null){
+ if(!['weavers','partys','others'].includes(k)){toast('Choose a category first');return}
+ state.editing=record?{k,id:record.id}:null;const label=categoryLabel[k],isW=k==='weavers';
+ // Internal IDs stay unique; the visible number stays sequential after deletions.
+ const nextId=Math.max(0,...state.data[k].map(r=>Number(r.id)||0))+1;
+ const displayNo=record ? state.data[k].findIndex(r=>r.id===record.id)+1 : state.data[k].length+1;
+ $('#modalTitle').textContent=(record?'Edit ':'Add ')+label;
+ $('#formSubmit').textContent=record?'Update':'Save';
+ const values=record||{id:nextId,name:'',looms:'',amount:''};
+ $('#formFields').innerHTML=`<div class="form-field"><label for="recordNo">${label} No.</label><input id="recordNo" value="${displayNo}" readonly></div><div class="form-field"><label for="recordName">Name</label><input id="recordName" required maxlength="80" placeholder="Enter ${label.toLowerCase()} name" value="${escapeHtml(values.name)}"></div>${isW?`<div class="form-field"><label for="recordLooms">Looms</label><input id="recordLooms" type="number" required min="0" step="1" placeholder="Enter looms" value="${values.looms??''}"></div>`:''}<div class="form-field"><label for="recordAmount">Amount (₹)</label><input id="recordAmount" type="number" required min="0" step="0.01" placeholder="Enter amount" value="${values.amount??''}"></div>`;
+ $('#modalOverlay').classList.add('open');setTimeout(()=>$('#recordName').focus(),120);
+}
+function closeRecordModal(){$('#modalOverlay').classList.remove('open');state.editing=null}
+$('#modalClose').addEventListener('click',closeRecordModal);$('#modalCancel').addEventListener('click',closeRecordModal);$('#modalOverlay').addEventListener('click',e=>{if(e.target===$('#modalOverlay'))closeRecordModal()});
+$('#recordForm').addEventListener('submit',e=>{e.preventDefault();const k=state.editing?.k||state.page;if(!['weavers','partys','others'].includes(k))return;const id=state.editing?.id||Math.max(0,...state.data[k].map(r=>r.id))+1;const name=$('#recordName').value.trim(),amount=Number($('#recordAmount').value);if(!name||!Number.isFinite(amount)||amount<0){toast('Enter a name and valid amount');return}const record={id,name,amount};if(k==='weavers'){const looms=Number($('#recordLooms').value);if(!Number.isFinite(looms)||looms<0){toast('Enter a valid loom count');return}record.looms=looms}
+ const idx=state.data[k].findIndex(r=>r.id===id);if(idx>=0){record.addedAt=state.data[k][idx].addedAt||Number(state.data[k][idx].id)||Date.now();state.data[k][idx]=record}else{record.addedAt=Date.now();state.data[k].push(record)}saveState();closeRecordModal();render();toast(idx>=0?'Record updated':'Record added')});
+let contextData=null;
+function openContext(anchor,data){contextData=data;const m=$('#contextMenu');m.classList.add('open');const r=anchor.getBoundingClientRect();const mw=160,mh=94;let left=Math.min(window.innerWidth-mw-10,Math.max(10,r.right-mw));let top=r.bottom+4;if(top+mh>window.innerHeight)top=Math.max(10,r.top-mh-4);m.style.left=left+'px';m.style.top=top+'px';$('#editAction').textContent=data.type==='share'?'Edit person':'Edit';$('#deleteAction').textContent=data.type==='share'?'Remove person':'Delete'}
+function closeContext(){ $('#contextMenu').classList.remove('open');contextData=null}
+document.addEventListener('click',e=>{if(!e.target.closest('#contextMenu')&&!e.target.closest('[data-more]')&&!e.target.closest('[data-share-more]'))closeContext()});
+$('#editAction').addEventListener('click',()=>{if(!contextData)return;const d=contextData;closeContext();if(d.type==='record'){const r=state.data[d.k].find(x=>x.id===d.id);if(r)openRecordModal(d.k,r)}else{toast('Edit the person name or percentage directly in the table')}});
+$('#deleteAction').addEventListener('click',()=>{if(!contextData)return;const d=contextData;closeContext();if(d.type==='record'){const r=state.data[d.k].find(x=>x.id===d.id);if(!r)return;if(confirm(`Delete "${r.name}"? This deletion will be saved locally and synced to Firebase when cloud access is enabled.`)){state.data[d.k]=state.data[d.k].filter(x=>x.id!==d.id);saveState();render();toast('Record deleted')}}else{if(confirm('Remove this person from sharing?')){state.shares.splice(d.i,1);state.shareCount=Math.max(1,state.shareCount-1);saveState();render()}}});
+function openFilter(){const selected=state.sort[state.page]||'recent';const radio=$(`input[name="sort"][value="${selected}"]`);if(radio)radio.checked=true;$('#filterOverlay').classList.add('open')}
+function closeFilter(){$('#filterOverlay').classList.remove('open')}
+$('#filterClose').addEventListener('click',closeFilter);$('#filterCancel').addEventListener('click',closeFilter);$('#filterOverlay').addEventListener('click',e=>{if(e.target===$('#filterOverlay'))closeFilter()});
+$('#filterApply').addEventListener('click',()=>{const v=$('input[name="sort"]:checked').value;state.sort[state.page]=v;closeFilter();render();toast(v==='recent'?'Sorted: recent added':v==='high'?'Sorted: high to low':'Sorted: low to high')});
+let toastTimer;function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeRecordModal();closeFilter();closeContext()}});
+// Start directly in the app without a sign-in screen.
+(async()=>{
+ try{
+  await loadCloudData();
+  render();
+  toast('Connected to Firebase');
+ }catch(error){
+  // Keep the interface usable with local storage if Firebase rules/config are not ready.
+  render();
+ }
+})();
+</script>
+</body>
+</html>
